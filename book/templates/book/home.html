@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Book Recommendation System</title>
+    <link href="{% static 'styles.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 font-sans">
+       
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var messageList = document.getElementById('message-list');
+            if (messageList && messageList.children.length > 0) {
+                alert(messageList.textContent); // Display the message in an alert
+                messageList.style.display = 'none'; // Hide the message list after displaying
+            }
+
+            var logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default button action
+                    var userConfirmed = confirm("Do you want to log out?");
+                    if (userConfirmed) {
+                        window.location.href = "{% url 'logout' %}"; // Redirect to logout URL
+                    }
+                });
+            }
+        });
+    </script>
+    {% comment %} unitil here {% endcomment %}
+
+    <div class="container mx-auto p-6">
+        <!-- Search Bar -->        
+        <section class="mb-8 search-container" style="background-image: url('{% static 'images/book.jpg' %}'); background-size: cover; background-position: center; min-height: 300px;">
+            <div class="search-bar p-4 rounded-lg  h-full w-full flex justify-center items-center">
+                <!-- rest of your code -->
+
+                <div class="content">
+                    <h2 class="text-2xl font-semibold mb-4 ring-amber-300 text-white">Search for Books</h2>
+                    <form action="{% url 'search_books' %}" method="get">
+                        <input type="text" name="query" placeholder="Search by title, author, or genre"
+                            class="border border-gray-300 p-2 rounded-lg w-full" />
+                        <button type="submit" class="mt-2 bg-yellow-400 text-white py-2 px-4 rounded hover:bg-blue-700">
+                            Search
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto p-6">
+            <!-- Inside home.html -->
+        
+           {% if recommendations %}
+           <h2 class="text-2xl font-bold mb-6">Recommended Books</h2>
+           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+               {% for book in recommendations %}
+                   <div class="bg-white shadow-md rounded-lg p-4 flex flex-col items-center"> <!-- Added items-center -->
+                       <div class="book-image-container mb-4 flex-grow flex justify-center"> <!-- Added flex and justify-center -->
+                           {% if book.cover_image %}
+                               <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover" class="w-32 h-48 object-cover rounded-lg"> 
+                           {% else %}
+                               <img src="{% static 'default_cover_image.png' %}" alt="Default cover" class="w-32 h-48 object-cover rounded-lg">
+                           {% endif %}
+                       </div>
+                       <h3 class="text-lg font-bold mb-2 text-center">{{ book.title }}</h3> <!-- Added text-center -->
+                       <p class="text-gray-600 mb-1 text-center">{{ book.author }}</p> <!-- Added text-center -->
+                       <p class="text-gray-600 mb-1 text-center">{{ book.genre }}</p> <!-- Added text-center -->
+                       <p class="text-gray-700 mb-4 text-center">{{ book.description|slice:":100" }}...</p> <!-- Added text-center -->
+                       <p class="text-gray-600 mb-2 text-center">{{ book.published_date }}</p> <!-- Added text-center -->
+                       <a href="{% url 'book_details' book.id %}" class="text-blue-600 hover:underline">Read more</a>
+                   </div>
+               {% empty %}
+                   <p>No recommendations available.</p>
+               {% endfor %}
+           </div>
+           {% endif %}
+           
+            <!-- Popular Books -->
+            <section>
+                <h2 class="text-2xl font-semibold mb-4">Popular Books</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {% for book in popular_books %}
+                    <div class="bg-white p-4 border rounded-lg shadow-md">
+                        {% if book.cover_image %}
+                        <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover" class="w-24 h-auto mb-4 mx-auto">
+                        {% else %}
+                        <img src="{% static 'default_cover_image.png' %}" alt="Default cover" class="w-24 h-auto mb-4 mx-auto">
+                        {% endif %}
+                        <h3 class="text-xl font-bold mb-2">{{ book.title }}</h3>
+                        <p class="text-gray-600 mb-2">{{ book.author }}</p>
+                        <p class="text-gray-600 mb-2">{{ book.genre }}</p>
+                        <p class="text-gray-700 mb-4">{{ book.description|slice:":100" }}...</p>
+                        <p class="text-gray-600 mb-2">{{ book.published_date }}</p>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <a href="{% url 'book_details' book.id %}" class="text-blue-600 hover:underline" style="flex: 1; text-align: left;">
+                         Read more
+                        </a>
+   
+                        </div>
+
+
+                        {% comment %} {% if request.user.is_authenticated %}
+                        <div>
+                        {% if request.user in book.favorites.all %}
+                        <form method="post" action="{% url 'remove_favorite' book.id %}">
+                        {% csrf_token %}
+                        <button type="submit" style="background-color: #FF4040; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Remove from Favorites
+                        </button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'add_favorite' book.id %}">
+                        {% csrf_token %}
+                        <button type="submit" style="background-color: #4cae4c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Add to Favorites
+                        </button>
+                        </form>
+                
+                    {% endif %}
+                </div> 
+                {% endif %}  {% endcomment %}
+
+            </div>
+            {% endfor %}
+        </div>
+        </section>
+
+    
+    </div>
+    {% if request.user.is_authenticated %}
+    {% comment %} <div style="display: flex; justify-content: flex-start; align-items: center; padding: 10px;">
+    <a href="{% url 'favorite_books' %}" h1 style="font-weight: bold; font-size: 25px; color: green; border: 5px solid #FFD700; border-radius: 5px;padding: 10px; display: inline-block;">
+    
+        View Favorite Books
+    </a>
+    </div> {% endcomment %}
+    {% endif %}     
+</div>
+    {% endblock %}
+
+</body>
+</html>
+

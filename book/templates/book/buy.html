@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="text-xl font-bold mb-2 ">{{ book.title }}</h3>
+    <img src="{{ book.cover_image.url }}" alt="Cover Page" style="max-width: 150; height: 200px;">    
+    
+    <p><strong>Author:</strong> {{ book.author }}</p>
+    <p><strong>Genre:</strong> {{ book.genre }}</p>
+    <p><strong>Published Date:</strong> {{ book.published_date }}</p>
+    <p><strong>Price:</strong> {{ book.price }}</p>
+{% if user.is_authenticated %}
+    <button id="buy-now-btn" style="display: block; padding: 3px; border: 4px solid ; border-radius: 6px; background-color:#FF4040; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s, border-color 0.3s;">
+        Buy Now
+    </button>
+
+    <!-- Hidden confirmation dialog -->
+    <div id="confirmation-dialog" style="display: none; width:500px; height:150px; border: 2px solid #FF4040; border-radius: 6px; background-color: #f8d7da; color: #721c24;">
+        <h2>Confirm Purchase</h2>
+        <p>Are you sure you want to buy "{{ book.title }}"?</p>
+        <form id="confirm-form" method="post" action="{% url 'buy_book' book.id %}">
+            {% csrf_token %}
+            <button type="submit" style="padding: 4px; border: 2px solid #FF4040; border-radius: 6px; background-color: #FF4040; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s, border-color 0.3s;">
+                Confirm Purchase
+            </button>
+            <button type="button" id="cancel-btn" style="padding: 4px; border: 2px solid #FF4040; border-radius: 4px; background-color: #cccccc; color: black; font-size: 16px; cursor: pointer; transition: background-color 0.3s, border-color 0.3s;">
+                Cancel
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('buy-now-btn').addEventListener('click', function() {
+            document.getElementById('confirmation-dialog').style.display = 'block';
+        });
+
+        document.getElementById('cancel-btn').addEventListener('click', function() {
+            document.getElementById('confirmation-dialog').style.display = 'none';
+        });
+    </script>
+{% else %}
+    <p><a href="{% url 'login' %}">Log in</a> to buy this book.</p>
+{% endif %}
+
+{% endblock %}

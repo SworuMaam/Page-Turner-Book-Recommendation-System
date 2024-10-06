@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-8">
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <!-- About Us Heading -->
+        <h1 class="text-5xl font-extrabold text-yellow-500 mb-6">About Us</h1>
+        
+        <!-- Expanded About Us Section -->
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            Welcome to <span class="font-semibold">PageTurner</span>, your trusted platform for personalized book recommendations. We are a group of passionate readers and tech enthusiasts committed to bridging the gap between readers and their next great book. With an ever-growing database of books and advanced algorithms that learn your preferences, we aim to simplify the process of finding books you'll love. 
+        </p>
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            Whether you're a casual reader looking for light reads or a bookworm seeking in-depth literary explorations, PageTurner has something for everyone. Our team continuously works to curate and improve the recommendation experience by combining both automated suggestions and hand-picked selections from literary experts. 
+        </p>
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            From bestselling novels to hidden gems, our goal is to create a community of readers who can share, explore, and grow their literary interests. We believe that a great book is waiting for everyone; you just need to find it—and that's where we come in.
+        </p>
+
+        <!-- Expanded Mission Section -->
+        <h1 class="text-5xl font-extrabold text-yellow-500 mb-6">Our Mission</h2>
+            <!-- Image Section -->
+        <div class="flex justify-center mb-8">
+            <img src="{% static 'images/about.jpg' %}" alt="Curated book recommendations"  style="height: 500px" class="w-full  object-cover rounded-lg shadow-md">
+        </div>
+        
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            Our mission at PageTurner is to cultivate a love of reading by making book discovery seamless and enjoyable. We understand that every reader is unique, which is why we focus on providing tailored recommendations based on individual preferences. Whether you are drawn to specific genres, authors, or literary themes, we use a mix of technology and human expertise to ensure that each recommendation feels personal and meaningful.
+        </p>
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            As we continue to innovate and refine our platform, we also remain committed to promoting diversity in literature. We aim to shine a spotlight on authors and stories that may be less known but have significant value. By offering a range of genres, cultures, and perspectives, we hope to broaden the horizons of our users and create a more inclusive reading culture.
+        </p>
+        <p class="text-gray-700 text-lg leading-relaxed mb-6">
+            At PageTurner, it's not just about finding your next read—it's about connecting with stories that resonate with you, challenge you, and inspire growth. We aim to build a platform that helps readers discover books that matter, fostering a lifelong love for reading.
+        </p>
+
+        <!-- Image Section -->
+        {% comment %} <div class="flex justify-center mb-8">
+            <img src="{% static 'images/about.jpg' %}" alt="Curated book recommendations" class="w-full h-64 object-cover rounded-lg shadow-md">
+        </div> {% endcomment %}
+
+        <!-- Explore Section -->
+        <h2 class="text-5xl font-bold text-yellow-500 mb-4">Explore More</h2>
+        <p class="text-gray-700 text-lg leading-relaxed mb-4">
+            Join our community and dive into a world of books tailored to your preferences. Discover reviews, recommendations, and genres that suit your style. Whether you’re looking for the latest releases or exploring timeless classics, PageTurner has you covered.
+        </p>
+        <a href="{% url 'search_books' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-6 rounded-lg font-bold transition-colors duration-300">
+            Browse Books
+        </a>
+    </div>
+</div>
+{% endblock %}

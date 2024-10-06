@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommendations</title>
+</head>
+<body>
+
+<h2 style="color: yellow; font-weight: bold; font-size: 24px;">Tell us your preferences</h2>
+
+<div style="margin-bottom: 20px;">
+    <label for="genre">Favorite Genre:</label>
+    <input type="text" id="genre" name="genre" placeholder="Enter your favorite genre">
+</div>
+
+<div style="margin-bottom: 20px;">
+    <label for="author">Favorite Author:</label>
+    <input type="text" id="author" name="author" placeholder="Enter your favorite author">
+</div>
+
+<button id="getRecommendations" style="background-color: #4cae4c; color: white; padding: 10px 20px; border-radius: 5px;">
+    Get Recommendations
+</button>
+
+<h3 id="recommendationHeading" style="color: yellow; margin-top: 30px; display: none;">Recommended Books for You:</h3>
+<div id="recommendations"></div>
+
+<script>
+    document.getElementById('getRecommendations').addEventListener('click', function() {
+        let genre = document.getElementById('genre').value;
+        let author = document.getElementById('author').value;
+
+        if (genre === "" || author === "") {
+            alert("Please fill in both fields.");
+            return;
+        }
+
+        // AJAX request to send the data to the backend and receive recommendations
+        fetch("{% url 'get_recommendations' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ genre: genre, author: author })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.recommendations.length > 0) {
+                document.getElementById('recommendationHeading').style.display = 'block';
+                let recommendationsDiv = document.getElementById('recommendations');
+                recommendationsDiv.innerHTML = "";  // Clear previous recommendations
+
+                data.recommendations.forEach(book => {
+                    let bookElement = `<p>${book.name} by ${book.author} (Genre: ${book.genre})</p>`;
+                    recommendationsDiv.innerHTML += bookElement;
+                });
+            } else {
+                alert("No recommendations found based on your preferences.");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+{% endblock %}

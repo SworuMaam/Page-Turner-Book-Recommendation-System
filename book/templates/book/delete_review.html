@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Delete Review</h2>
+<p>Are you sure you want to delete your review for "{{ review.book.title }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="display: block; padding: 10px; border: 2px ; border-radius: 4px; background-color:#FF4040;
+    color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s, border-color 0.3s;">Confirm Deletion</button>
+</form>
+<a href="{% url 'book_details' review.book.id %}">Cancel</a>
+{% endblock %}

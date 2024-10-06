@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> <!-- Tailwind CSS CDN -->
+    <style>
+        /* Ensure the image is correctly positioned in smaller screen sizes */
+        .custom-bg {
+            background-image: url("{% static 'images/Login.jpg' %}");
+        }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center custom-bg bg-cover bg-center">
+    <div class="bg-white bg-opacity-80 p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">Create an Account</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="text-red-500 text-sm mb-4">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" name="email" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="password1" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password1" name="password1" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <label for="password2" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input type="password" id="password2" name="password2" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="w-full bg-yellow-500 text-white py-2 px-4 rounded-md shadow hover:bg-yell focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Register
+                </button>
+            </div>
+        </form>
+
+        <p class="mt-4 text-sm text-gray-600 text-center">
+            Already have an account? <a href="{% url 'login' %}" class="text-indigo-600 hover:underline">Log in</a>.
+        </p>
+    </div>
+</body>
+</html>

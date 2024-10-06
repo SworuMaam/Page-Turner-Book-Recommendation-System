@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get to Know You</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> <!-- Tailwind CSS -->
+    <style>
+        body {
+            background-image: url("{% static 'images/background.jpg' %}"); /* Add your background image */
+            background-size: 100%; /* Adjust size of the background image */
+            background-position: center;
+            background-repeat: no-repeat; /* Prevent repeating */
+            font-family: 'Poppins', sans-serif; /* Use a modern font like Poppins */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="w-full max-w-lg h-[400px] mx-auto p-8 bg-white bg-opacity-80 rounded-lg shadow-lg absolute top-1/4 left-1/2 transform -translate-x-1/2 mt-0">
+        <h1 class="text-2xl font-bold text-center mb-4 text-gray-800">Help Us Get to Know You!</h1>
+        <p class="text-center text-gray-600 mb-6">We'd love to know your favorite book genre and author.</p>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="favorite_genre" class="block text-lg font-medium text-gray-700">Favorite Genre</label>
+                <select id="favorite_genre" name="favorite_genre" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-yellow-800">
+                    <option value="">None</option>
+                    {% for genre in genres %}
+                        <option value="{{ genre }}">{{ genre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="favorite_author" class="block text-lg font-medium text-gray-700">Favorite Author</label>
+                <select id="favorite_author" name="favorite_author" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500">
+                    <option value="">None</option>
+                    {% for author in authors %}
+                        <option value="{{ author }}">{{ author }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" class="w-full bg-yellow-500 text-white py-2 px-4 rounded-md shadow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+
+
+{% comment %} <div class="mb-3">
+    <label for="formGroupExampleInput" class="form-label">Example label</label>
+    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder">
+  </div>
+  <div class="mb-3">
+    <label for="formGroupExampleInput2" class="form-label">Another label</label>
+    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input placeholder">
+  </div> {% endcomment %}

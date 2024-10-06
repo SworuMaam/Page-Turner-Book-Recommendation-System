@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">{{ profile.user.username }}'s Profile</h1>
+
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700">Favorite Genre:</h2>
+            <p class="text-lg text-gray-600">{{ profile.favorite_genre|default:"Not specified" }}</p>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700">Favorite Author:</h2>
+            <p class="text-lg text-gray-600">{{ profile.favorite_author|default:"Not specified" }}</p>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-800 mt-6 mb-4">Books Reviewed by {{ profile.user.username }}:</h3>
+        <ul class="space-y-4">
+            {% for review in reviews %}
+                <li class="border rounded-lg p-4 bg-gray-50 shadow">
+                    <strong class="text-lg font-semibold">{{ review.book.title }}</strong> by 
+                    <span class="text-gray-600">{{ review.book.author }}</span>
+                    <div class="mt-2">
+                        <span class="font-medium">Rating:</span> 
+                        <span class="text-indigo-600">{{ review.rating }} / 5</span> <br>
+                        <span class="font-medium">Comment:</span> {{ review.comment }} <br>
+                        <span class="text-gray-500 text-sm">Reviewed on: {{ review.created_at|date:"F j, Y" }}</span>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="text-gray-500">No books reviewed yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

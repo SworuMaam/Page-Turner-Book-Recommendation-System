@@ -1,0 +1,199 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Book Recommendation{% endblock %}</title>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    {% tailwind_css %}
+    <style>
+        /* Custom CSS for dropdown */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 10;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+            width: 12rem;
+        }
+        
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100 text-gray-800">
+    {% comment %} {% if messages %}
+        <div style="position: fixed; top: 10px; right: 10px; padding: 10px; border-radius: 5px; background-color: #dff0d8; color: #3c763d;">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %} {% endcomment %}
+    {% if messages %}
+    <div id="message-box" style="position: fixed; top: 0; left: 0; right: 0; padding: 15px; background-color: #dff0d8; color: #3c763d; text-align: center; z-index: 1000;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- JavaScript to hide the message after a few seconds -->
+    <script>
+        setTimeout(function() {
+            var messageBox = document.getElementById('message-box');
+            if (messageBox) {
+                messageBox.style.display = 'none';
+            }
+        }, 2000);  // Hide after 5 seconds (5000 milliseconds)
+    </script>
+{% endif %}
+
+    <!-- Navigation Bar -->
+     
+    <nav class="bg-yellow-500 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="text-white text-3xl font-bold">Page Turner</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'home' %}" class="text-white hover:text-gray-300">Home</a>
+                {% comment %} <a href="{% url 'ask_favorites' %}">Set Your Favorites</a> {% endcomment %}
+                {% comment %} <a href="{% url 'about' %}" class="text-white hover:text-gray-300">About Us</a> {% endcomment %}
+                <div class="relative dropdown">
+                    <button class="text-white hover:text-gray-300 focus:outline-none">
+                        Category
+                        <svg class="w-5 h-5 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <a href="{% url 'genre_search' genre='fantasy' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Fantasy</a>
+                        <a href="{% url 'genre_search' genre='fiction' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Fiction</a>
+                        <a href="{% url 'genre_search' genre='romance' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Romance</a>
+                        <a href="{% url 'genre_search' genre='thriller' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Thriller</a>
+                        <a href="{% url 'genre_search' genre='novel' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Novel</a>
+                        <a href="{% url 'genre_search' genre='literature' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Literature</a>
+                        <a href="{% url 'genre_search' genre='mystery' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Mystery</a>
+
+
+                        <!-- Add more genres as needed -->
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                <a href="{% url 'favorite_books' %}" class="text-white hover:text-gray-300">Favorite</a>
+                <a href="{% url 'user_profile' %}" style="text-decoration: none;">
+                    <button style="background-color: transparent; border: none; cursor: pointer;">
+                        <span class="text-white">Welcome, {{ user.username }}!</span>
+                    </button>
+                </a>
+                 {% comment %} <a href="{% url 'user_profile' %}">My Profile</a> {% endcomment %}
+
+                    <button id="logout-btn" style="background-color: #d9534f; color: white; padding: 10px 20px; border: none; border-radius: 5px;">
+                        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+                    </button>
+                {% else %} 
+
+                
+                {% comment %} <span class="text-white">Welcome, {{ user.username }}!</span>
+                    <a href="{% url 'user_profile' %}" class="text-white" style="margin-left: 15px; text-decoration: underline;">My Profile</a>
+                    <button id="logout-btn" style="background-color: #d9534f; color: white; padding: 10px 20px; border: none; border-radius: 5px;">
+                    <a href="{% url 'logout' %}" class="text-white">Logout</a>
+                    </button> {% endcomment %}
+
+                
+                <div class="relative dropdown">
+                    <button class="text-white hover:text-gray-300 focus:outline-none">
+                        Sign Up
+                        <svg class="w-5 h-5 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <p><a href="{% url 'register' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Register</a>
+                        </p>
+                        <a href="{% url 'login' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Login</a>
+                        
+                    </div>
+                </div>
+                {% endif %}
+                {% comment %} {% if user.is_authenticated %} {% endcomment %}
+                {% comment %} <button id="logout-btn">
+                <a href="{% url 'logout' %}"class="text-white hover:text-gray-300">Logout</a></button> {% endcomment %}
+                {% comment %} <a href="{% url 'login' %}" class="text-white hover:text-gray-300">SignIn</a> {% endcomment %}
+            </div>
+        </div>
+    </nav>
+    
+    
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6 flex-1 height="1500"">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% comment %} <!-- Footer -->
+    <footer class="bg-yellow-500 p-4 text-center text-white">
+        &copy; 2024 BookRec. All rights reserved.
+    </footer>
+     {% endcomment %}
+     <footer class="bg-yellow-500 p-8 text-white">
+        <div class="text-center mb-6 font-bold text-2xl">
+          {% comment %} <p class="text-2xl font-bold  &copy; {{ current_year }}mb-2">Copyright Page Turner. All rights reserved.</p> {% endcomment %}
+          <p>&copy; {{ current_year }} Page Turner. All rights reserved.</p>
+        </div>
+      
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Contact Us Section -->
+          <div class="text-center md:text-center">
+            <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+            <p class="mb-1">Phone: 9800000000</p>
+            <p>Phone: 9800000000</p>
+          </div>
+      
+          <!-- Email Section -->
+          <div class="text-center md:text-center">
+            <h3 class="text-xl font-bold mb-4 ">Email Us</h3>
+            <p class="mb-1">sworiyashakya@gmail.com</p>
+            <p>ritisha@gmail.com</p>
+          </div>
+      
+          <!-- Quick Links Section -->
+          <div class="text-center md:text-center">
+            <h3 class="text-xl font-bold mb-4 gap-8">Quick Links</h3>
+            <ul class="list-none">
+              <li><a href={%url 'home'%} class="hover:underline">Home</a></li>
+              <li><a href={%url 'search_books'%} class="hover:underline">Search</a></li>
+              <li><a href={%url 'about'%} class="hover:underline">About Us</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+    <script>
+        // Logout confirmation
+        document.getElementById('logout-btn')?.addEventListener('click', function() {
+            if (confirm('Do you want to log out?')) {
+                // Perform logout by redirecting to the logout URL
+                window.location.href = '{% url "logout" %}';
+                
+                // Display success message
+                var message = document.getElementById('logout-message');
+                message.textContent = 'Log Out successful!';
+                message.classList.add('show');
+
+                // Hide message after 3 seconds
+                setTimeout(function() {
+                    message.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

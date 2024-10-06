@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% comment %} {% if has_reviewed %} {% endcomment %}
+<h2>Add Review</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="rating">Rating:</label>
+    <select id="rating" name="rating" required>
+        <option value="1">&#x2605;</option>
+        <option value="2">&#x2605;&#x2605;</option>
+        <option value="3">&#x2605;&#x2605;&#x2605;</option>
+        <option value="4">&#x2605;&#x2605;&#x2605;&#x2605;</option>
+        <option value="5">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</option>
+    </select><br><br>
+    <label for="comment">Comment:</label>
+    <textarea id="comment" name="comment" rows="5" cols="30" required></textarea><br><br>
+    <button type="submit" style="display: block; padding: 10px; border: 2px ; border-radius: 4px; background-color:#FF4040;
+    color: white; font-size: 16px; cursor: pointer; transition: background-color 0.3s, border-color 0.3s;">Submit</button>
+      {% if has_reviewed %} 
+        <p>Review already submitted. You can <a href="{% url 'edit_review' review_id=book.id %}">edit your review</a> instead.</p>
+        or <a href="{% url 'delete_review' review_id=book.id %}">delete your review</a> instead.</p>
+    {%endif%}
+</form>
+{% endblock %}

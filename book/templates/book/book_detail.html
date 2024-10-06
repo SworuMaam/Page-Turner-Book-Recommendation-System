@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.name }} - Book Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100" >
+    <div class="max-w-5xl mx-auto mt-10 border border-gray-300 bg-white rounded-lg shadow-lg">
+        <!-- Header -->
+        <div class="bg-yellow-500 h-16 flex items-center justify-center rounded-t-lg">
+            <h1 class="text-3xl font-bold text-white">Book Details</h1>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Left Section: Review Form and Book Actions -->
+            <div class="col-span-1 flex flex-col items-center">
+                <!-- Book Title -->
+                <img src="{{ book.cover_image.url }}" alt="Cover Page" class="w-48 h-64 object-cover mb-6 rounded-lg shadow-md">
+
+                <p class="text-3xl font-bold text-gray-800 mb-4">{{ book.title }}</p>
+
+                <!-- Action Buttons -->
+                {% if request.user.is_authenticated %}
+                    <div class="flex flex-col space-y-3">
+                        <a href="{% url 'buy_book' id=book.id %}" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-200 text-center font-medium">Buy Book</a>
+                        <div>
+                            {% if request.user in book.favorites.all %}
+                                <form method="post" action="{% url 'remove_favorite' book.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200">Remove from Favorites</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'add_favorite' book.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200">Add to Favorites</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Review Form -->
+                 
+                {% if request.user.is_authenticated and not has_reviewed %}
+                <div class="p-8 mt-6 bg-gray-50 rounded-lg border border-gray-300 shadow-lg">
+                    <h2 class="text-xl font-semibold mb-6">Add Your Review:</h2>
+                    <form method="post" action="{% url 'add_review' id=book.id %}">
+                        {% csrf_token %}
+                        <div class="mb-6">
+                            <label for="rating" class="block text-lg font-medium text-gray-700">Rating:</label>
+                            <div id="star-rating" class="flex items-center space-x-2 mt-2">
+                                <!-- Stars -->
+                                {% for i in "12345" %}
+                                    <span class="star text-2xl cursor-pointer text-gray-400 hover:text-yellow-500 transition duration-200" data-value="{{ i }}">&#9733;</span>
+                                {% endfor %}
+                            </div>
+                            <input type="hidden" name="rating" id="rating" value="" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="comment" class="block text-lg font-medium text-gray-700 ">Comment:</label>
+                            <textarea id="comment" name="comment" rows="3" class="w-full border border-gray-300 p-3 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 shadow-sm" placeholder="Write your comment here" ></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-200">Submit Review</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Section: Book Details and Reviews -->
+            <div class="col-span-2">
+                <!-- Book Info -->
+                <div class="mb-8">
+                    <p class="text-lg text-gray-700 mt-4"><strong>Author:</strong> {{ book.author }}</p>
+                    <p class="text-lg text-gray-700 mt-4"><strong>Genre:</strong> {{ book.genre }}</p>
+                    <p class="text-lg text-gray-700 mt-2"><strong>Published Date:</strong> {{ book.published_date }}</p>
+                    <p class="text-lg text-gray-700 mt-2"><strong>Price:</strong> {{ book.price }}</p>
+                    <p class="text-lg text-gray-700 mt-2"><strong>Description:</strong> {{ book.description }}</p>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="mt-10 ">
+                    <h2 class="text-2xl font-semibold mb-4">Reviews</h2>
+                    <div class="overflow-y-auto border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-inner max-h-90">
+                        {% for review in reviews %}
+                            <div class="review mb-4 p-4 bg-white rounded-lg shadow-lg">
+                                <p class="font-semibold text-lg text-gray-800">{{ review.user.username }}</p>
+                                <p class="opacity-80 text-gray-600">
+                                    Rating:
+                                    {% for i in "*****" %}
+                                        {% if forloop.counter0 < review.rating %}
+                                            <span class="text-yellow-500">&#x2605;</span>  <!-- filled star -->
+                                        {% else %}
+                                            <span class="text-gray-400">&#x2606;</span>  <!-- empty star -->
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                                <p class="mt-2 text-gray-700">{{ review.comment }}</p>
+                                <p class="opacity-70 text-sm text-gray-500 mt-2">Posted on: {{ review.created_at }}</p>
+                                {% if review.user == request.user %}
+                                    <p class="mt-4">
+                                        <a href="{% url 'edit_review' review_id=review.id %}" class="text-blue-500 hover:underline">Edit Review</a>
+                                        <span class="mx-2 text-gray-500">|</span>
+                                        <a href="{% url 'delete_review' review_id=review.id %}" class="text-red-500 hover:underline">Delete Review</a>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500">No reviews yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript for Star Rating -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const stars = document.querySelectorAll('.star');
+                const ratingInput = document.getElementById('rating');
+
+                stars.forEach((star, index) => {
+                    star.addEventListener('click', () => {
+                        ratingInput.value = index + 1;
+
+                        stars.forEach((s, i) => {
+                            if (i <= index) {
+                                s.classList.add('text-yellow-500');
+                                s.classList.remove('text-gray-400');
+                            } else {
+                                s.classList.add('text-gray-400');
+                                s.classList.remove('text-yellow-500');
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
+{% endblock %}
